@@ -1,0 +1,63 @@
+{
+  "branches": ["main"],
+  "plugins": [
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "preset": "conventionalcommits"
+      }
+    ],
+    [
+      "@semantic-release/release-notes-generator",
+      {
+        "preset": "conventionalcommits"
+      }
+    ],
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogFile": "CHANGELOG.md"
+      }
+    ],
+    [
+      "@semantic-release/npm",
+      {
+        "npmPublish": false
+      }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "VERSION=${nextRelease.version} node .github/scripts/update-version-in-files.js && VERSION=${nextRelease.version} node .github/scripts/sync-readme-changelog.js && node .github/scripts/check-version-sync.js",
+        "publishCmd": "npm run build:notest"
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": [
+          "CHANGELOG.md",
+          "package.json",
+          "package-lock.json",
+          "composer.json",
+          "fn-structured-data.php",
+          "readme.txt"
+        ],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }
+    ],
+    [
+      "@semantic-release/github",
+      {
+        "assets": [
+          {
+            "path": "dist/fn-structured-data-*.zip",
+            "label": "Faytuks Structured Data plugin package"
+          }
+        ],
+        "successComment": false,
+        "failComment": false
+      }
+    ]
+  ]
+}

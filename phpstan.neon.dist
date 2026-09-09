@@ -1,0 +1,18 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+    level: 8
+    paths:
+        - fn-structured-data.php
+        - uninstall.php
+        - src
+    bootstrapFiles:
+        - tests/phpstan/constants.php
+    treatPhpDocTypesAsCertain: false
+    parallel:
+        maximumNumberOfProcesses: 2
+    # Rank Math is an optional integration dependency and is not installed for
+    # static analysis. It is detected through string class names and guarded
+    # is_callable() checks in src/Support/RankMath.php, so no stubs or ignores
+    # are needed here.

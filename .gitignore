@@ -1,0 +1,53 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors / IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env / local config
+.env
+.env.*
+*.local
+
+# Node
+node_modules/
+.npm/
+
+# Composer / PHP dependencies
+vendor/
+
+# Build artifacts
+dist/
+.build/
+
+# PHPUnit / coverage
+.phpunit.cache/
+.phpunit.result.cache
+coverage/
+.clover
+
+# PHPCS / PHPStan caches
+.phpcs-cache
+.phpstan.cache/
+
+# Local overrides of tooling config
+phpunit.xml
+phpunit.unit.xml
+phpunit.integration.xml
+phpcs.xml
+phpstan.neon
+
+# Archives
+*.zip

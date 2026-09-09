@@ -1,0 +1,51 @@
+{
+  "name": "fn-structured-data-build",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Build tooling for Faytuks Structured Data",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "composer test:unit",
+    "lint:php": "find . -name '*.php' -not -path './vendor/*' -not -path './node_modules/*' -not -path './.build/*' -not -path './dist/*' -print0 | xargs -0 -n1 php -l",
+    "lint:js": "node --check assets/js/admin.js",
+    "lint:wpcs": "composer lint",
+    "lint": "npm run lint:php && npm run lint:js && npm run lint:wpcs",
+    "analyse": "composer analyse",
+    "check": "npm run lint && npm run analyse && npm run test && npm run build:verify:full",
+    "commit": "npm run lint:php && git add -A && cz",
+    "setup:git-cz": "git config alias.cz '!npm run commit'",
+    "update-version": "node .github/scripts/update-version-in-files.js",
+    "verify-version": "node .github/scripts/check-version-sync.js",
+    "sync-readme": "node .github/scripts/sync-readme-changelog.js",
+    "release": "semantic-release",
+    "release:dry-run": "semantic-release --dry-run",
+    "build:clean": "rm -rf dist .build",
+    "build:cleanup": "rm -rf .build",
+    "build:vendor": "composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader",
+    "build:vendor:dev": "composer install --prefer-dist --no-interaction --no-progress",
+    "build:stage": "mkdir -p .build/fn-structured-data/vendor/yahnis-elsts dist && cp -R fn-structured-data.php uninstall.php readme.txt src assets .build/fn-structured-data/ && cp vendor/autoload.php .build/fn-structured-data/vendor/ && cp -R vendor/composer .build/fn-structured-data/vendor/ && cp -R vendor/yahnis-elsts/plugin-update-checker .build/fn-structured-data/vendor/yahnis-elsts/ && find .build -name '.DS_Store' -delete",
+    "build:zip": "cd .build && zip -rq ../dist/fn-structured-data-${npm_package_version}.zip fn-structured-data",
+    "build:verify": "node .github/scripts/verify-package.js",
+    "build:verify:full": "npm run build:notest",
+    "build": "npm run build:clean && npm run test && npm run build:vendor && npm run build:stage && npm run build:zip && npm run build:verify && npm run build:cleanup && npm run build:vendor:dev",
+    "build:notest": "npm run build:clean && npm run build:stage && npm run build:zip && npm run build:verify && npm run build:cleanup",
+    "deploy:local:push": "docker exec ${FN_WP_CONTAINER:-fnlive-wordpress-1} mkdir -p /var/www/html/wp-content/plugins/fn-structured-data && docker cp .build/fn-structured-data/. ${FN_WP_CONTAINER:-fnlive-wordpress-1}:/var/www/html/wp-content/plugins/fn-structured-data",
+    "deploy:local": "npm run build:vendor && npm run build:stage && npm run deploy:local:push && npm run build:cleanup && npm run build:vendor:dev"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/exec": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "commitizen": "^4.3.1",
+    "conventional-changelog-conventionalcommits": "^8.0.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "semantic-release": "^24.2.5"
+  }
+}

@@ -1,0 +1,191 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Lint and static analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.0"
+          tools: composer:v2
+          coverage: none
+
+      # --no-check-publish because the "version" field is deliberately kept as a
+      # version-sync source, matching FN Live. The plugin ships as a release ZIP
+      # and is never published to Packagist.
+      - name: Validate composer.json
+        run: composer validate --no-check-publish
+
+      - name: Install PHP dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: PHP syntax check
+        run: |
+          find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
+
+      - name: PHPCS (WordPress Coding Standards)
+        run: composer lint
+
+      - name: PHPStan
+        run: composer analyse
+
+  test:
+    name: Unit tests (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.0", "8.1", "8.2", "8.3"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+          coverage: none
+
+      - name: Install PHP dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Unit tests
+        run: composer test:unit
+
+  integration:
+    name: Integration tests
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: wordpress_test
+          MYSQL_USER: wordpress
+          MYSQL_PASSWORD: wordpress
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3308:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -proot"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          tools: composer:v2
+          extensions: mysqli
+          coverage: none
+
+      - name: Install PHP dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Install WordPress test suite
+        run: composer test:integration:install
+        env:
+          WP_TEST_DB_HOST: 127.0.0.1:3308
+
+      - name: Normalize test config
+        run: composer test:integration:prepare
+
+      - name: Integration tests
+        run: vendor/bin/phpunit -c phpunit.integration.xml.dist
+
+  build:
+    name: Build and package verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          tools: composer:v2
+          coverage: none
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Verify version synchronization
+        run: npm run verify-version
+
+      - name: JavaScript syntax check
+        run: npm run lint:js
+
+      - name: Install PHP production dependencies
+        run: composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
+
+      - name: Build and verify plugin package
+        run: npm run build:notest
+
+      - name: Upload plugin package
+        uses: actions/upload-artifact@v4
+        with:
+          name: fn-structured-data-package
+          path: dist/fn-structured-data-*.zip
+          if-no-files-found: error
+
+  security:
+    name: Dependency security audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          tools: composer:v2
+          coverage: none
+
+      - name: Install PHP dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Composer audit
+        run: composer audit
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: npm audit
+        run: npm audit --audit-level=high

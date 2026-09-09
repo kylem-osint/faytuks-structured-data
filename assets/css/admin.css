@@ -1,0 +1,56 @@
+/* Faytuks Structured Data — settings screen. Loaded only on the plugin's own page. */
+
+.fn-structured-data-settings .fn-structured-data-source {
+	margin: 4px 0 0;
+	color: #646970;
+	font-size: 12px;
+}
+
+.fn-structured-data-settings .fn-structured-data-source--override {
+	color: #135e96;
+	font-weight: 600;
+}
+
+.fn-structured-data-settings .fn-structured-data-source code {
+	font-size: 11px;
+}
+
+.fn-structured-data-settings .fn-structured-data-logo-field {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	flex-wrap: wrap;
+}
+
+.fn-structured-data-settings .fn-structured-data-logo-preview {
+	display: block;
+	margin-top: 8px;
+}
+
+.fn-structured-data-settings .fn-structured-data-logo-preview img {
+	max-width: 220px;
+	max-height: 80px;
+	height: auto;
+	padding: 6px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+}
+
+.fn-structured-data-settings .fn-structured-data-diagnostics {
+	max-width: 760px;
+	margin-bottom: 24px;
+}
+
+.fn-structured-data-settings .fn-structured-data-diagnostics th {
+	width: 300px;
+}
+
+.fn-structured-data-settings .fn-structured-data-preview {
+	max-width: 760px;
+	max-height: 420px;
+	overflow: auto;
+	padding: 12px 16px;
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+	border-radius: 3px;
+}
