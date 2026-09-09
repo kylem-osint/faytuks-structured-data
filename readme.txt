@@ -4,7 +4,7 @@ Tags: schema, structured data, json-ld, news, rank math
 Requires at least: 7.0
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -55,6 +55,9 @@ No. Posts keep Rank Math's normal NewsArticle behaviour until an editor selects 
 No. Values must be absolute http(s) URLs; anything else is discarded on save and again before output.
 
 == Changelog ==
+= 1.0.1 =
+- Fixed php: support php 8.2 due to dev server requirements.
+
 = 1.0.0 =
 - Added Rank Math publisher promotion to Schema.org NewsMediaOrganization with the original @id preserved.
 - Added the twelve newsroom transparency properties, emitted only when a valid URL is configured.
@@ -64,5 +67,8 @@ No. Values must be absolute http(s) URLs; anything else is discarded on save and
 - Added GitHub release updates through Plugin Update Checker.
 
 == Upgrade Notice ==
+= 1.0.1 =
+Fixed php: support php 8.2 due to dev server requirements.
+
 = 1.0.0 =
 First release: promotes the Rank Math publisher entity to NewsMediaOrganization, adds newsroom transparency properties and per-post news article subtypes.

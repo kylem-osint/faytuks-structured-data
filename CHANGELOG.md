@@ -1,3 +1,9 @@
+## [1.0.1](https://github.com/kylem-osint/faytuks-structured-data/compare/v1.0.0...v1.0.1) (2026-09-09)
+
+### Bug Fixes
+
+* **php:** support php 8.2 due to dev server requirements ([a992fd0](https://github.com/kylem-osint/faytuks-structured-data/commit/a992fd0a0ced9d578ea299206bb090247f85e511))
+
 ## 1.0.0 (2026-09-09)
 
 ### Bug Fixes
@@ -14,4 +20,3 @@
 * **admin:** add a Settings screen with organization, editorial transparency and identity sections, plus a diagnostics panel and read-only organization preview
 * **updates:** integrate Plugin Update Checker for GitHub release updates
 # Changelog
-

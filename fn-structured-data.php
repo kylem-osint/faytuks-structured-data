@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Faytuks Structured Data
  * Description: Extends and corrects Rank Math's structured data for Faytuks Network: promotes the publisher Organization to a NewsMediaOrganization, adds newsroom transparency properties, and adds per-post NewsArticle subtype control.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Requires at least: 7.0
  * Requires PHP: 8.2
  * Author: Kyle M
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'FN_STRUCTURED_DATA_VERSION', '1.0.0' );
+define( 'FN_STRUCTURED_DATA_VERSION', '1.0.1' );
 define( 'FN_STRUCTURED_DATA_FILE', __FILE__ );
 define( 'FN_STRUCTURED_DATA_PATH', plugin_dir_path( __FILE__ ) );
 define( 'FN_STRUCTURED_DATA_URL', plugin_dir_url( __FILE__ ) );

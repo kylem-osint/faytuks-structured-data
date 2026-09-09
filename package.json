@@ -1,7 +1,7 @@
 {
   "name": "fn-structured-data-build",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Build tooling for Faytuks Structured Data",
   "engines": {
     "node": "^22.22.2 || >=24.15"
