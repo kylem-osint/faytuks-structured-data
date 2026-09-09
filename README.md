@@ -16,7 +16,7 @@ Nothing else in the graph is touched, and no second graph is ever printed.
 | WordPress | 6.0+ |
 | PHP | 8.0+ |
 | Rank Math | Free or Pro, with the Schema module enabled |
-| Node (development only) | 20+ |
+| Node (development only) | 22.22.2+ or 24.15+ |
 
 Rank Math is an **integration dependency**, not a hard dependency. If it is missing or its schema module is off, the plugin does nothing to the frontend and shows an admin notice. It never deactivates itself and never emits a fallback graph.
 
@@ -132,6 +132,8 @@ composer install
 npm install
 ```
 
+The Node floor is set by the release tooling, not by this plugin: semantic-release 25 and its changelog/git plugins require `^22.22.2 || >=24.15` and refuse to run on anything older. CI and the release workflow use Node 24, so keep local development on the same line.
+
 ### Commands
 
 | Command | What it does |
@@ -144,6 +146,7 @@ npm install
 | `composer test:integration` | Integration tests (starts the Dockerized MySQL, installs the WP test suite, runs, tears down) |
 | `npm run lint` | `php -l`, `node --check`, then PHPCS |
 | `npm run verify-version` | Asserts every version reference agrees |
+| `npm run verify-update-source` | Asserts the updater points at the current repository (CI only) |
 | `npm run build` | Full production build: tests, prod-only vendor, ZIP, package verification, then restores dev dependencies |
 | `npm run build:notest` | Build without re-running tests (what the release workflow calls) |
 | `npm run deploy:local` | Stage a runtime-only copy and push it into the local WordPress container |
@@ -276,15 +279,16 @@ Intentional deviations, and why:
 |---|---|
 | PSR-4 namespaced `src/` (`Faytuks\StructuredData\`) instead of FN Live's flat, prefixed class files | Requested explicitly, and the schema transformers need to be unit testable in isolation from WordPress |
 | PHPCS + WordPress Coding Standards added | FN Live has no PHPCS gate; the spec asks to match or exceed its quality gates |
-| PHPStan at level 8 added | Same reason. Level 8 passes with no baseline and no ignored errors |
+| PHPStan 2.x at level 8 added | Same reason. Level 8 passes with no baseline and no ignored errors. FN Live has no static analysis, so there was no version to inherit |
 | Split PHPUnit configs (`phpunit.unit.xml.dist` / `phpunit.integration.xml.dist`) | Lets the pure transformation logic be tested with no database or WordPress runtime, which keeps CI's unit matrix fast |
 | `composer validate --no-check-publish` rather than `--strict` | The `version` field is kept deliberately as a version-sync source, matching FN Live. `--strict` only objects to it as a Packagist publishing recommendation, and this plugin ships as a release ZIP. Schema errors still fail the gate |
 | MySQL on port 3308 for integration tests | Avoids colliding with FN Live's integration database if both run locally |
 
-Documented placeholders:
+Notes:
 
-- `Updater::REPOSITORY_URL` defaults to `https://github.com/kylem-osint/fn-structured-data/`, following FN Live's owner. This repository has no remote yet, so confirm or override it (`FN_STRUCTURED_DATA_PUC_REPOSITORY`, or the `fn_structured_data_puc_repository` filter) once the remote exists.
 - All newsroom policy URLs default to empty. No Faytuks policy URL is hard-coded anywhere in business logic; the administrator configures them.
+
+The GitHub repository is named `faytuks-structured-data` while the plugin slug, directory and release ZIP are `fn-structured-data`. That is deliberate — the slug must stay stable because it is the WordPress plugin folder name — but it means `Updater::REPOSITORY_URL` and the slug are not interchangeable. CI asserts the updater points at the repository it is running in, so a rename cannot silently break update checks. Override the source with the `FN_STRUCTURED_DATA_PUC_REPOSITORY` constant or the `fn_structured_data_puc_repository` filter.
 
 ## License
 

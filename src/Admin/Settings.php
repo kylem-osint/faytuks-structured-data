@@ -110,6 +110,18 @@ final class Settings {
 	}
 
 	/**
+	 * Hook suffix WordPress assigned to the settings page.
+	 *
+	 * Empty until register_menu() has run. The prefix depends on whether the
+	 * admin menu has been built, so callers must not assume `settings_page_`.
+	 *
+	 * @return string
+	 */
+	public function hook_suffix(): string {
+		return $this->hook_suffix;
+	}
+
+	/**
 	 * Register the option, sections and fields.
 	 *
 	 * @return void

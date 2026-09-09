@@ -126,7 +126,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Set up PHP
@@ -141,6 +141,9 @@ jobs:
 
       - name: Verify version synchronization
         run: npm run verify-version
+
+      - name: Verify update source matches this repository
+        run: npm run verify-update-source
 
       - name: JavaScript syntax check
         run: npm run lint:js
@@ -168,7 +171,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Set up PHP
