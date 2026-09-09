@@ -19,6 +19,7 @@
     "update-version": "node .github/scripts/update-version-in-files.js",
     "verify-version": "node .github/scripts/check-version-sync.js",
     "verify-update-source": "node .github/scripts/check-update-source.js",
+    "verify-release-notes": "node .github/scripts/check-release-notes.js",
     "sync-readme": "node .github/scripts/sync-readme-changelog.js",
     "release": "semantic-release",
     "release:dry-run": "semantic-release --dry-run",
@@ -45,7 +46,7 @@
     "@semantic-release/exec": "^7.1.0",
     "@semantic-release/git": "^11.0.1",
     "commitizen": "^4.3.1",
-    "conventional-changelog-conventionalcommits": "^10.4.0",
+    "conventional-changelog-conventionalcommits": "^9.3.1",
     "cz-conventional-changelog": "^3.3.0",
     "semantic-release": "^25.0.9"
   }

@@ -46,8 +46,14 @@ function stripMarkdown( text ) {
 
 function extractReleaseBody( changelog, version ) {
 	const escaped = version.replace( /\./g, '\\.' );
+	// Accepts every heading shape the release tooling produces: the first
+	// release is written "## 1.0.0 (2026-09-09)", later ones link to a compare
+	// view as "## [1.0.1](...) (2026-09-10)", and hand-written entries use
+	// "## 1.0.0 - 2026-09-09". Requiring brackets or a dash silently missed the
+	// first-release form and failed the release at the prepare step. The
+	// lookahead stops 1.0.0 from matching 1.0.0-beta.1.
 	const headerRe = new RegExp(
-		`^##\\s+(?:\\[${escaped}\\][^\\n]*|${escaped}\\s*-\\s*[^\\n]*)$`,
+		`^##\\s+(?:\\[${escaped}\\]|${escaped})(?![\\w.-])[^\\n]*$`,
 		'm'
 	);
 	const match = headerRe.exec( changelog );

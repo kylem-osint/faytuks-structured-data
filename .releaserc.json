@@ -28,7 +28,8 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "VERSION=${nextRelease.version} node .github/scripts/update-version-in-files.js && VERSION=${nextRelease.version} node .github/scripts/sync-readme-changelog.js && node .github/scripts/check-version-sync.js",
+        "generateNotesCmd": "VERSION=${nextRelease.version} node .github/scripts/release-notes-supplement.js",
+        "prepareCmd": "VERSION=${nextRelease.version} node .github/scripts/update-version-in-files.js && VERSION=${nextRelease.version} node .github/scripts/merge-changelog-sections.js && VERSION=${nextRelease.version} node .github/scripts/sync-readme-changelog.js && node .github/scripts/check-version-sync.js",
         "publishCmd": "npm run build:notest"
       }
     ],

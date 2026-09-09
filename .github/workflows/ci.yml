@@ -238,6 +238,12 @@ jobs:
       - name: Verify update source matches this repository
         run: npm run verify-update-source
 
+      # semantic-release only renders notes once it decides to publish, so this
+      # renders them up front. Without it, an incompatible changelog preset only
+      # shows up by failing the release itself.
+      - name: Verify release notes pipeline
+        run: npm run verify-release-notes
+
       - name: JavaScript syntax check
         run: npm run lint:js
 
