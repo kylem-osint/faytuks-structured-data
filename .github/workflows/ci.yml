@@ -49,8 +49,12 @@ jobs:
         run: composer analyse
 
   test:
-    name: Unit tests
+    name: Unit tests (PHP ${{ matrix.php }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.2", "8.3"]
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -58,7 +62,7 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.3"
+          php-version: ${{ matrix.php }}
           tools: composer:v2
           coverage: pcov
 
@@ -69,8 +73,12 @@ jobs:
         run: composer test:unit:report
 
       # Uploaded even on failure so the report job can show which tests broke.
+      # Only the production runtime's results are published: every matrix entry
+      # runs the same tests and would write the same file names, so uploading
+      # all of them would either collide on the artifact name or let whichever
+      # job finished last decide what the report shows.
       - name: Upload unit results
-        if: always()
+        if: always() && matrix.php == '8.3'
         uses: actions/upload-artifact@v7
         with:
           name: test-results-unit

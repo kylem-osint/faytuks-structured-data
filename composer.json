@@ -5,7 +5,7 @@
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",
   "require": {
-    "php": "^8.3",
+    "php": "^8.2",
     "ext-json": "*",
     "yahnis-elsts/plugin-update-checker": "^5.6"
   },
@@ -75,7 +75,7 @@
   "config": {
     "sort-packages": true,
     "platform": {
-      "php": "8.3.0"
+      "php": "8.2.0"
     },
     "allow-plugins": {
       "composer/installers": true,
