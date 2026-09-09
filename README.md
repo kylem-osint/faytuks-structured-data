@@ -14,7 +14,7 @@ Nothing else in the graph is touched, and no second graph is ever printed.
 | | |
 |---|---|
 | WordPress | 7.0+ |
-| PHP | 8.3+ |
+| PHP | 8.2+ |
 | Rank Math | Free or Pro, with the Schema module enabled |
 | Node (development only) | 22.22.2+ or 24.15+ |
 
@@ -296,7 +296,7 @@ Intentional deviations, and why:
 | Split PHPUnit configs (`phpunit.unit.xml.dist` / `phpunit.integration.xml.dist`) | Lets the pure transformation logic be tested with no database or WordPress runtime, which keeps CI's unit matrix fast |
 | `composer validate --no-check-publish` rather than `--strict` | The `version` field is kept deliberately as a version-sync source, matching FN Live. `--strict` only objects to it as a Packagist publishing recommendation, and this plugin ships as a release ZIP. Schema errors still fail the gate |
 | MySQL on port 3308 for integration tests | Avoids colliding with FN Live's integration database if both run locally |
-| PHP 8.3 minimum, and CI tests only 8.3 | The Faytuks Network production site runs PHP 8.3. Testing a range the site will never run costs CI time and invites supporting versions nobody uses, so the floor and the tested version are deliberately the same number. Raising the floor means WordPress will refuse to activate the plugin below 8.3 rather than fataling at runtime |
+| PHP 8.2 minimum, with unit tests on 8.2 and 8.3 | The Faytuks Network production site runs 8.3, so that is what the static analysis, integration, build and report jobs use. The floor is one version lower to leave room to move the plugin between hosts without a plugin release, and unit tests run on both so the supported floor is actually exercised rather than merely claimed. `testVersion` in `phpcs.xml.dist` is set to `8.2-` so PHPCompatibility flags anything that would not run on the floor |
 | WordPress 7.0 minimum instead of FN Live's 6.0 | Same reasoning applied to the CMS. Integration tests run against 7.1, so 7.0 is the oldest release with a defensible claim of support. WordPress enforces `Requires at least` at activation, so older sites are blocked cleanly rather than silently running untested code. `minimum_wp_version` in `phpcs.xml.dist` is kept in step so WPCS flags anything that predates the supported floor |
 
 Notes:

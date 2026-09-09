@@ -7,7 +7,7 @@ This project includes:
 
 ## Versions
 
-- PHP: 8.3, which is both the minimum and the only version CI tests, because it is what the production site runs
+- PHP: 8.2 minimum, with unit tests running on 8.2 and 8.3 in CI. 8.3 is what the production site runs, so the static analysis, integration, build and report jobs all use it
 - WordPress: 7.1
 
 Override the WordPress version for a run with `WP_TEST_VERSION`, for example

@@ -4,7 +4,7 @@
  * Description: Extends and corrects Rank Math's structured data for Faytuks Network: promotes the publisher Organization to a NewsMediaOrganization, adds newsroom transparency properties, and adds per-post NewsArticle subtype control.
  * Version: 1.0.0
  * Requires at least: 7.0
- * Requires PHP: 8.3
+ * Requires PHP: 8.2
  * Author: Kyle M
  * Author URI: https://www.faytuksnetwork.com
  * Plugin URI: https://www.faytuksnetwork.com
