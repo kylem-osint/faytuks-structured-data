@@ -152,7 +152,7 @@ jobs:
         run: npm run build:notest
 
       - name: Upload plugin package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: fn-structured-data-package
           path: dist/fn-structured-data-*.zip
