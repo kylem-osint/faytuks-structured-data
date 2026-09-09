@@ -1,5 +1,5 @@
 === Faytuks Structured Data ===
-Contributors: kylem
+Contributors: grey_kestrel
 Tags: schema, structured data, json-ld, news, rank math
 Requires at least: 7.0
 Tested up to: 7.1
@@ -13,7 +13,7 @@ Promotes Rank Math's publisher entity to a Schema.org NewsMediaOrganization, add
 == Description ==
 Faytuks Structured Data extends the structured data Rank Math already generates. Rank Math stays in charge of the JSON-LD graph; this plugin modifies two entities inside it.
 
-Author: Kyle M
+Author: Grey Kestrel
 Email: korvath85@gmail.com
 Website: https://www.faytuksnetwork.com
 
