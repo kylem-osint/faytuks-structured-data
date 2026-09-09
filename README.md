@@ -281,6 +281,11 @@ Inherited as-is:
 - WordPress test scaffolding: `install-wp-tests.sh`, `normalize-wp-tests-config.sh`, Dockerized MySQL for local integration runs;
 - plugin header authorship and organizational metadata, `readme.txt` plus `CHANGELOG.md`, `.gitignore`/`.editorconfig` conventions, and Dependabot coverage for Composer, npm, and Actions.
 
+Dependency pull requests target `staging`, not `main`, so they are integrated
+alongside everything else and reach `main` through the usual `staging` merge.
+Dependabot *security* updates are the exception: they ignore `target-branch` and
+always open against the default branch.
+
 Intentional deviations, and why:
 
 | Deviation | Reason |
