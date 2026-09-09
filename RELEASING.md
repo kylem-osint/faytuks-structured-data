@@ -22,6 +22,25 @@ semantic-release updates and commits these on `main` before the plugin ZIP is bu
 
 `.github/scripts/check-version-sync.js` runs during the prepare step and in CI, and fails the release if any of those disagree or if `CHANGELOG.md` has no section for the new version.
 
+## Notes written ahead of a release
+
+Release notes normally come from commit subjects. A version whose notes were
+written by hand before any tag existed is a special case, and 1.0.0 was one: the
+plugin was built under commit types that do not release, so the generated notes
+would have described only the commit that happened to trigger the release.
+
+Two steps handle it, and both are no-ops once the project is releasing normally:
+
+- `release-notes-supplement.js` runs as `generateNotesCmd` and appends any
+  pre-existing `CHANGELOG.md` section for the version being released onto the
+  generated notes, so the GitHub Release body is complete. It prints nothing
+  when no such section exists, and it never fails.
+- `merge-changelog-sections.js` runs in the prepare step, after
+  `@semantic-release/changelog` has prepended its section. That plugin does not
+  check whether the file already documents the version, so a hand-written entry
+  would leave two headings for it. This folds them into one, merging matching
+  `###` groups and dropping duplicate bullets.
+
 ## Release Workflow
 
 1. Merge conventional commits into `main` (or push to `main`).
@@ -45,6 +64,9 @@ The release ZIP includes `vendor/autoload.php`, `vendor/composer/` and `vendor/y
 - Version script: `.github/scripts/update-version-in-files.js`
 - WordPress readme sync: `.github/scripts/sync-readme-changelog.js` (copies the new `CHANGELOG.md` section into `readme.txt` Changelog + Upgrade Notice)
 - Version consistency check: `.github/scripts/check-version-sync.js`
+- Release notes smoke test: `.github/scripts/check-release-notes.js` (CI only)
+- Hand-written notes supplement: `.github/scripts/release-notes-supplement.js`
+- Duplicate changelog section merge: `.github/scripts/merge-changelog-sections.js`
 - Package verification: `.github/scripts/verify-package.js`
 - Auth secret: `GH_TOKEN`
 - Build command (inside semantic-release publish, after the version commit): `npm run build:notest`
@@ -126,4 +148,30 @@ Settings → Faytuks Structured Data → Diagnostics reports whether the update 
 - Update downloads but the plugin breaks:
   - a source archive was installed instead of the release asset; reinstall from the Release ZIP.
 - Workflow runs but no release is published:
-  - no releasable conventional commits since the last tag.
+  - no releasable conventional commits since the last tag. Only `feat`, `fix`,
+    `perf`, reverts and breaking changes release. `chore`, `ci`, `test`, `docs`,
+    `style`, `refactor` and `build` do not, so a run made up entirely of those
+    exits successfully having published nothing.
+- Release fails in `generateNotes` with `Missing helper: "conventional-changelog-conventionalcommits requires conventional-changelog-writer@9 or newer"`:
+  - the changelog preset was upgraded past what semantic-release's writer
+    supports. `@semantic-release/release-notes-generator` 14 depends on
+    `conventional-changelog-writer` 8, which cannot render preset 10, so the
+    preset is pinned to `^9.3.1` and Dependabot is blocked from taking its next
+    major. `npm run verify-release-notes` reproduces this locally and runs in CI.
+
+## Changelog tooling compatibility
+
+semantic-release only renders release notes *after* it has decided to publish.
+A broken changelog preset therefore causes no CI failure at all and only
+surfaces by failing the release workflow, which is how the first 1.0.0 attempt
+died. Three packages have to agree:
+
+| Package | Constraint |
+|---|---|
+| `semantic-release` | pulls `@semantic-release/release-notes-generator` `^14.1.0` |
+| `@semantic-release/release-notes-generator` 14 | depends on `conventional-changelog-writer` `^8` |
+| `conventional-changelog-conventionalcommits` 10+ | requires `conventional-changelog-writer` 9+ |
+
+So while release-notes-generator 14 is the latest stable, the preset has to stay
+on 9.x. `npm run verify-release-notes` renders notes from a synthetic commit on
+every CI run so this mismatch fails a pull request rather than a release.

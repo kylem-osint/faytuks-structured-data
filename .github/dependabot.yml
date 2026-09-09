@@ -23,6 +23,15 @@ updates:
     groups:
       dev-dependencies:
         dependency-type: development
+    ignore:
+      # The changelog preset is coupled to conventional-changelog-writer, which
+      # semantic-release pins transitively. Preset 10 requires writer 9, while
+      # @semantic-release/release-notes-generator 14 still depends on writer 8,
+      # and taking that major broke the 1.0.0 release. Only lift this once
+      # semantic-release ships a release-notes-generator built on writer 9.
+      - dependency-name: conventional-changelog-conventionalcommits
+        update-types:
+          - version-update:semver-major
 
   - package-ecosystem: github-actions
     directory: "/"

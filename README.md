@@ -148,6 +148,7 @@ The Node floor is set by the release tooling, not by this plugin: semantic-relea
 | `npm run lint` | `php -l`, `node --check`, then PHPCS |
 | `npm run verify-version` | Asserts every version reference agrees |
 | `npm run verify-update-source` | Asserts the updater points at the current repository (CI only) |
+| `npm run verify-release-notes` | Renders release notes from a synthetic commit so a broken changelog preset fails a PR, not a release |
 | `npm run build` | Full production build: tests, prod-only vendor, ZIP, package verification, then restores dev dependencies |
 | `npm run build:notest` | Build without re-running tests (what the release workflow calls) |
 | `npm run deploy:local` | Stage a runtime-only copy and push it into the local WordPress container |
