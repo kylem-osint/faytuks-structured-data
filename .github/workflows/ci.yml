@@ -153,7 +153,7 @@ jobs:
       # merge-multiple lets both suites land in one coverage/ directory, which
       # is the layout test-report.js expects locally too.
       - name: Download test results
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           pattern: test-results-*
           merge-multiple: true
