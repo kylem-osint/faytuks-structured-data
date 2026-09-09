@@ -11,7 +11,7 @@ DB_NAME="$1"
 DB_USER="$2"
 DB_PASS="$3"
 DB_HOST="${4:-127.0.0.1}"
-WP_VERSION="${5:-6.9.1}"
+WP_VERSION="${5:-7.1}"
 INSTALLER_PATH="/tmp/install-wp-tests.sh"
 TMP_ROOT="${TMPDIR:-/tmp}"
 WP_TESTS_DIR="${WP_TESTS_DIR:-/tmp/wordpress-tests-lib}"
@@ -25,10 +25,24 @@ install_with_wp_cli_scaffold() {
   "${INSTALLER_PATH}" "${DB_NAME}" "${DB_USER}" "${DB_PASS}" "${DB_HOST}" "${WP_VERSION}"
 }
 
+# wordpress.org publishes an x.y release as "wordpress-7.1.tar.gz", but
+# wordpress-develop tags the same release "7.1.0". Normalize x.y to x.y.0 so
+# both downloads resolve from one WP_VERSION value.
+develop_tag() {
+  if [[ "${WP_VERSION}" =~ ^[0-9]+\.[0-9]+$ ]]; then
+    echo "${WP_VERSION}.0"
+  else
+    echo "${WP_VERSION}"
+  fi
+}
+
 install_without_svn() {
+  local tests_tag
+  tests_tag="$(develop_tag)"
+
   local core_archive="${TMP_ROOT}/wordpress-${WP_VERSION}.tar.gz"
-  local tests_archive="${TMP_ROOT}/wordpress-develop-${WP_VERSION}.tar.gz"
-  local extracted_base=""
+  local tests_archive="${TMP_ROOT}/wordpress-develop-${tests_tag}.tar.gz"
+  local extract_dir="${TMP_ROOT}/wordpress-develop-${tests_tag}-src"
 
   mkdir -p "${WP_TESTS_DIR}" "${WP_CORE_DIR}"
 
@@ -40,16 +54,29 @@ install_without_svn() {
   fi
 
   if [[ ! -f "${WP_TESTS_DIR}/includes/functions.php" ]]; then
-    echo "Downloading WordPress test suite ${WP_VERSION}..."
-    if ! curl -fsSL "https://codeload.github.com/WordPress/wordpress-develop/tar.gz/refs/tags/${WP_VERSION}" -o "${tests_archive}"; then
-      curl -fsSL "https://github.com/WordPress/wordpress-develop/archive/refs/tags/${WP_VERSION}.tar.gz" -o "${tests_archive}"
+    echo "Downloading WordPress test suite ${WP_VERSION} (develop tag ${tests_tag})..."
+    if ! curl -fsSL "https://codeload.github.com/WordPress/wordpress-develop/tar.gz/refs/tags/${tests_tag}" -o "${tests_archive}"; then
+      curl -fsSL "https://github.com/WordPress/wordpress-develop/archive/refs/tags/${tests_tag}.tar.gz" -o "${tests_archive}"
     fi
-    extracted_base="$(tar -tzf "${tests_archive}" | head -1 | cut -d/ -f1)"
-    rm -rf "${TMP_ROOT:?}/${extracted_base}"
-    tar -xzf "${tests_archive}" -C "${TMP_ROOT}"
-    cp -R "${TMP_ROOT}/${extracted_base}/tests/phpunit/includes" "${WP_TESTS_DIR}/"
-    cp -R "${TMP_ROOT}/${extracted_base}/tests/phpunit/data" "${WP_TESTS_DIR}/"
-    cp "${TMP_ROOT}/${extracted_base}/wp-tests-config-sample.php" "${WP_TESTS_DIR}/wp-tests-config.php"
+    # Extract with --strip-components so the archive's top-level directory name
+    # never has to be discovered. Listing it with `tar -tzf | head -1` closes the
+    # pipe while tar is still writing, which GNU tar reports as
+    # "tar: stdout: write error" and exits non-zero on.
+    rm -rf "${extract_dir:?}"
+    mkdir -p "${extract_dir}"
+    tar -xzf "${tests_archive}" -C "${extract_dir}" --strip-components=1
+
+    for required in tests/phpunit/includes tests/phpunit/data wp-tests-config-sample.php; do
+      if [[ ! -e "${extract_dir}/${required}" ]]; then
+        echo "Unexpected archive layout: ${required} is missing." >&2
+        exit 1
+      fi
+    done
+
+    cp -R "${extract_dir}/tests/phpunit/includes" "${WP_TESTS_DIR}/"
+    cp -R "${extract_dir}/tests/phpunit/data" "${WP_TESTS_DIR}/"
+    cp "${extract_dir}/wp-tests-config-sample.php" "${WP_TESTS_DIR}/wp-tests-config.php"
+    rm -rf "${extract_dir}"
   fi
 
   # Configure db and path settings for local PHPUnit bootstrap.

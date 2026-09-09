@@ -134,7 +134,17 @@ final class SettingsTest extends WP_UnitTestCase {
 		$this->assertFalse( wp_style_is( 'fn-structured-data-admin', 'enqueued' ) );
 		$this->assertFalse( wp_script_is( 'fn-structured-data-admin', 'enqueued' ) );
 
-		$this->settings->enqueue_assets( 'settings_page_' . Settings::PAGE_SLUG );
+		/*
+		 * The prefix is environment dependent: WordPress only resolves it to
+		 * `settings_page_` once the admin menu has been built, and falls back to
+		 * `admin_page_` otherwise (as it does under the test suite). Assert on
+		 * the suffix WordPress actually assigned rather than a literal.
+		 */
+		$hook_suffix = $this->settings->hook_suffix();
+
+		$this->assertStringEndsWith( Settings::PAGE_SLUG, $hook_suffix );
+
+		$this->settings->enqueue_assets( $hook_suffix );
 
 		$this->assertTrue( wp_style_is( 'fn-structured-data-admin', 'enqueued' ) );
 		$this->assertTrue( wp_script_is( 'fn-structured-data-admin', 'enqueued' ) );
@@ -170,7 +180,7 @@ final class SettingsTest extends WP_UnitTestCase {
 		set_current_screen( 'settings_page_' . Settings::PAGE_SLUG );
 
 		update_option(
-			SettingsRepository::OPTION,
+			SettingsRepository::OPTION_KEY,
 			array(
 				'organization' => array(
 					'logo'    => 'https://faytuksnetwork.com/logo.png',

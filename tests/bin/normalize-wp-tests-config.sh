@@ -5,7 +5,7 @@ set -euo pipefail
 DB_NAME="${WP_TEST_DB_NAME:-wordpress_test}"
 DB_USER="${WP_TEST_DB_USER:-wordpress}"
 DB_PASS="${WP_TEST_DB_PASS:-wordpress}"
-DB_HOST="${WP_TEST_DB_HOST:-127.0.0.1:3307}"
+DB_HOST="${WP_TEST_DB_HOST:-127.0.0.1:3308}"
 WP_CORE_DIR="${WP_CORE_DIR:-/tmp/wordpress}"
 
 resolve_tests_dir() {

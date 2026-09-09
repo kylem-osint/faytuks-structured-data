@@ -147,7 +147,19 @@ final class ArticleTypeMetaBoxTest extends WP_UnitTestCase {
 		$this->article_type->render_meta_box( get_post( $this->post_id ) );
 		$markup = (string) ob_get_clean();
 
-		$this->assertStringContainsString( 'value="opinion" selected', $markup );
+		// WordPress's selected() helper emits " selected='selected'", so match on
+		// the attribute rather than an exact substring.
+		$this->assertMatchesRegularExpression(
+			'/value="opinion"\s+selected=([\'"])selected\1/',
+			$markup
+		);
+
+		$this->assertSame(
+			1,
+			preg_match_all( '/selected=([\'"])selected\1/', $markup ),
+			'Exactly one option may be preselected.'
+		);
+
 		$this->assertStringContainsString( 'fn_structured_data_article_type_nonce', $markup );
 		$this->assertStringNotContainsString( 'value="satire"', $markup );
 	}

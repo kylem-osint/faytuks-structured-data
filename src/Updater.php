@@ -26,7 +26,7 @@ final class Updater {
 	 * Override with the FN_STRUCTURED_DATA_PUC_REPOSITORY constant or the
 	 * `fn_structured_data_puc_repository` filter if the remote differs.
 	 */
-	public const REPOSITORY_URL = 'https://github.com/kylem-osint/fn-structured-data/';
+	public const REPOSITORY_URL = 'https://github.com/kylem-osint/faytuks-structured-data/';
 
 	/**
 	 * Branch PUC reads releases and tags from.

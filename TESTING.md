@@ -7,8 +7,13 @@ This project includes:
 
 ## Versions
 
-- PHP: 8.0 (minimum), tested on 8.0–8.3 in CI
-- WordPress: 6.9.1
+- PHP: 8.3, which is both the minimum and the only version CI tests, because it is what the production site runs
+- WordPress: 7.1
+
+Override the WordPress version for a run with `WP_TEST_VERSION`, for example
+`WP_TEST_VERSION=6.9.1 composer test:integration`. An `x.y` value such as `7.1`
+is the wordpress.org release name; the installer maps it to the matching
+`wordpress-develop` tag (`7.1.0`) automatically.
 
 ## 1. Install dependencies
 
@@ -88,6 +93,39 @@ Covered by the integration suite:
 - per-post subtype selection applied on an actual singular request
 - meta box save path: nonce, capability, allowlist, and default-choice removal
 - settings registration under Settings, capability enforcement on save, and asset scoping
+
+## 4. Coverage and the CI report
+
+Every CI run posts a single pull request comment with the results of both
+suites and their combined coverage, updating that same comment on each push
+rather than adding a new one. The same report is written to the workflow's job
+summary, so it is available for `push` and `workflow_dispatch` runs too.
+
+To reproduce it locally you need a coverage driver (pcov or Xdebug); without one
+the test commands still work and the report simply says coverage was not
+reported.
+
+```bash
+composer test:unit:report          # writes coverage/junit-unit.xml + coverage/clover-unit.xml
+composer test:integration:report   # same for the integration suite
+composer test:report               # renders the Markdown summary from coverage/
+```
+
+`composer test:integration:report` expects the WordPress test suite to already
+be installed and the database running, so run `composer test:integration:setup`
+and `composer test:integration:prepare` first.
+
+Two details worth knowing:
+
+- Coverage is measured over `src/` only. `fn-structured-data.php` and
+  `uninstall.php` are loaded by WordPress rather than by tests, so including
+  them would report a permanently uncoverable 0%.
+- The two suites are combined by taking the union of covered lines, not by
+  adding their numbers up. Both suites execute many of the same lines, so
+  summing them would count that overlap twice and overstate coverage.
+
+There is deliberately no coverage threshold. The report informs review; it does
+not gate the merge. The suites themselves are the gate.
 
 ## Notes
 

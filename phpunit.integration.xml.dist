@@ -16,4 +16,12 @@
         <env name="WP_PHP_BINARY" value="php"/>
         <env name="WP_TESTS_PHPUNIT_POLYFILLS_PATH" value="vendor/yoast/phpunit-polyfills"/>
     </php>
+
+    <!-- Restricted to src/ so WordPress core is never measured. See the note in
+         phpunit.unit.xml.dist for why the two root PHP files are left out. -->
+    <coverage>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </coverage>
 </phpunit>
