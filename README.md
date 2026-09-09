@@ -13,8 +13,8 @@ Nothing else in the graph is touched, and no second graph is ever printed.
 
 | | |
 |---|---|
-| WordPress | 6.0+ |
-| PHP | 8.0+ |
+| WordPress | 7.0+ |
+| PHP | 8.3+ |
 | Rank Math | Free or Pro, with the Schema module enabled |
 | Node (development only) | 22.22.2+ or 24.15+ |
 
@@ -270,8 +270,7 @@ Inherited as-is:
 - build mechanics: staged `.build/` directory, prod-only `composer install --no-dev`, ZIP naming, dev-dependency restore, and package verification;
 - PUC integration: Composer-installed v5, GitHub Releases with required release assets, `wp-config.php` constant or environment variable for private-repo tokens;
 - WordPress test scaffolding: `install-wp-tests.sh`, `normalize-wp-tests-config.sh`, Dockerized MySQL for local integration runs;
-- plugin header authorship and organizational metadata, `readme.txt` plus `CHANGELOG.md`, `.gitignore`/`.editorconfig` conventions, and Dependabot coverage for Composer, npm, and Actions;
-- PHP 8.0 / WordPress 6.0 minimums.
+- plugin header authorship and organizational metadata, `readme.txt` plus `CHANGELOG.md`, `.gitignore`/`.editorconfig` conventions, and Dependabot coverage for Composer, npm, and Actions.
 
 Intentional deviations, and why:
 
@@ -283,6 +282,8 @@ Intentional deviations, and why:
 | Split PHPUnit configs (`phpunit.unit.xml.dist` / `phpunit.integration.xml.dist`) | Lets the pure transformation logic be tested with no database or WordPress runtime, which keeps CI's unit matrix fast |
 | `composer validate --no-check-publish` rather than `--strict` | The `version` field is kept deliberately as a version-sync source, matching FN Live. `--strict` only objects to it as a Packagist publishing recommendation, and this plugin ships as a release ZIP. Schema errors still fail the gate |
 | MySQL on port 3308 for integration tests | Avoids colliding with FN Live's integration database if both run locally |
+| PHP 8.3 minimum, and CI tests only 8.3 | The Faytuks Network production site runs PHP 8.3. Testing a range the site will never run costs CI time and invites supporting versions nobody uses, so the floor and the tested version are deliberately the same number. Raising the floor means WordPress will refuse to activate the plugin below 8.3 rather than fataling at runtime |
+| WordPress 7.0 minimum instead of FN Live's 6.0 | Same reasoning applied to the CMS. Integration tests run against 7.1, so 7.0 is the oldest release with a defensible claim of support. WordPress enforces `Requires at least` at activation, so older sites are blocked cleanly rather than silently running untested code. `minimum_wp_version` in `phpcs.xml.dist` is kept in step so WPCS flags anything that predates the supported floor |
 
 Notes:
 

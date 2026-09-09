@@ -5,13 +5,13 @@
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",
   "require": {
-    "php": "^8.0",
+    "php": "^8.3",
     "ext-json": "*",
     "yahnis-elsts/plugin-update-checker": "^5.6"
   },
   "require-dev": {
     "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
-    "php-stubs/wordpress-stubs": "^6.7",
+    "php-stubs/wordpress-stubs": "^7.1",
     "phpcompatibility/phpcompatibility-wp": "^2.1",
     "phpstan/phpstan": "^2.2",
     "phpunit/phpunit": "^9.6",
@@ -54,7 +54,7 @@
     "test:integration:env:up": "docker compose -f tests/integration/docker-compose.yml up -d --wait",
     "test:integration:env:down": "docker compose -f tests/integration/docker-compose.yml down",
     "test:integration:env:reset": "docker compose -f tests/integration/docker-compose.yml down -v",
-    "test:integration:install": "bash tests/bin/install-wp-tests.sh ${WP_TEST_DB_NAME:-wordpress_test} ${WP_TEST_DB_USER:-wordpress} ${WP_TEST_DB_PASS:-wordpress} ${WP_TEST_DB_HOST:-127.0.0.1:3308} ${WP_TEST_VERSION:-6.9.1}",
+    "test:integration:install": "bash tests/bin/install-wp-tests.sh ${WP_TEST_DB_NAME:-wordpress_test} ${WP_TEST_DB_USER:-wordpress} ${WP_TEST_DB_PASS:-wordpress} ${WP_TEST_DB_HOST:-127.0.0.1:3308} ${WP_TEST_VERSION:-7.1}",
     "test:integration:setup": [
       "@test:integration:env:up",
       "@test:integration:install"
@@ -69,7 +69,7 @@
   "config": {
     "sort-packages": true,
     "platform": {
-      "php": "8.0.30"
+      "php": "8.3.0"
     },
     "allow-plugins": {
       "composer/installers": true,

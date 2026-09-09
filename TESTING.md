@@ -7,8 +7,13 @@ This project includes:
 
 ## Versions
 
-- PHP: 8.0 (minimum), tested on 8.0–8.3 in CI
-- WordPress: 6.9.1
+- PHP: 8.3, which is both the minimum and the only version CI tests, because it is what the production site runs
+- WordPress: 7.1
+
+Override the WordPress version for a run with `WP_TEST_VERSION`, for example
+`WP_TEST_VERSION=6.9.1 composer test:integration`. An `x.y` value such as `7.1`
+is the wordpress.org release name; the installer maps it to the matching
+`wordpress-develop` tag (`7.1.0`) automatically.
 
 ## 1. Install dependencies
 
