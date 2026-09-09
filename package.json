@@ -9,7 +9,7 @@
   "scripts": {
     "test": "composer test:unit",
     "lint:php": "find . -name '*.php' -not -path './vendor/*' -not -path './node_modules/*' -not -path './.build/*' -not -path './dist/*' -print0 | xargs -0 -n1 php -l",
-    "lint:js": "node --check assets/js/admin.js",
+    "lint:js": "node --check assets/js/admin.js && for f in .github/scripts/*.js; do node --check \"$f\" || exit 1; done",
     "lint:wpcs": "composer lint",
     "lint": "npm run lint:php && npm run lint:js && npm run lint:wpcs",
     "analyse": "composer analyse",

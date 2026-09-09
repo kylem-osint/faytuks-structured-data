@@ -144,6 +144,7 @@ The Node floor is set by the release tooling, not by this plugin: semantic-relea
 | `composer analyse` | PHPStan (level 8, `szepeviktor/phpstan-wordpress`) |
 | `composer test:unit` | Unit tests (no WordPress runtime needed) |
 | `composer test:integration` | Integration tests (starts the Dockerized MySQL, installs the WP test suite, runs, tears down) |
+| `composer test:report` | Render the merged test and coverage summary from `coverage/` |
 | `npm run lint` | `php -l`, `node --check`, then PHPCS |
 | `npm run verify-version` | Asserts every version reference agrees |
 | `npm run verify-update-source` | Asserts the updater points at the current repository (CI only) |
@@ -152,6 +153,13 @@ The Node floor is set by the release tooling, not by this plugin: semantic-relea
 | `npm run deploy:local` | Stage a runtime-only copy and push it into the local WordPress container |
 
 Integration tests need Docker; see `TESTING.md`.
+
+CI posts a single pull request comment with both suites' results and their
+combined coverage, editing that comment in place on each push instead of
+stacking up new ones. The same summary appears in the workflow job summary, so
+`push` and `workflow_dispatch` runs get it too. Coverage is reported, not
+enforced: there is no threshold that can fail a build. See `TESTING.md` for how
+to reproduce the report locally.
 
 ### Deploying to the local site
 

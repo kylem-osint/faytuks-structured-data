@@ -94,6 +94,39 @@ Covered by the integration suite:
 - meta box save path: nonce, capability, allowlist, and default-choice removal
 - settings registration under Settings, capability enforcement on save, and asset scoping
 
+## 4. Coverage and the CI report
+
+Every CI run posts a single pull request comment with the results of both
+suites and their combined coverage, updating that same comment on each push
+rather than adding a new one. The same report is written to the workflow's job
+summary, so it is available for `push` and `workflow_dispatch` runs too.
+
+To reproduce it locally you need a coverage driver (pcov or Xdebug); without one
+the test commands still work and the report simply says coverage was not
+reported.
+
+```bash
+composer test:unit:report          # writes coverage/junit-unit.xml + coverage/clover-unit.xml
+composer test:integration:report   # same for the integration suite
+composer test:report               # renders the Markdown summary from coverage/
+```
+
+`composer test:integration:report` expects the WordPress test suite to already
+be installed and the database running, so run `composer test:integration:setup`
+and `composer test:integration:prepare` first.
+
+Two details worth knowing:
+
+- Coverage is measured over `src/` only. `fn-structured-data.php` and
+  `uninstall.php` are loaded by WordPress rather than by tests, so including
+  them would report a permanently uncoverable 0%.
+- The two suites are combined by taking the union of covered lines, not by
+  adding their numbers up. Both suites execute many of the same lines, so
+  summing them would count that overlap twice and overstate coverage.
+
+There is deliberately no coverage threshold. The report informs review; it does
+not gate the merge. The suites themselves are the gate.
+
 ## Notes
 
 - The integration DB runs via `mysql:8.4` in `tests/integration/docker-compose.yml` on port 3308, and persists in the `fn_structured_data_test_db_data` volume.

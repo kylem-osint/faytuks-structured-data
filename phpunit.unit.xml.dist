@@ -10,4 +10,16 @@
             <directory>tests/unit</directory>
         </testsuite>
     </testsuites>
+
+    <!--
+        Only src/ is measured. fn-structured-data.php and uninstall.php are
+        loaded by WordPress rather than by tests, so including them would report
+        a permanently uncoverable 0% and hide real movement in the code that
+        tests can actually reach.
+    -->
+    <coverage>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </coverage>
 </phpunit>

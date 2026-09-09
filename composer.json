@@ -44,6 +44,9 @@
       "@test:integration"
     ],
     "test:unit": "phpunit -c phpunit.unit.xml.dist",
+    "test:unit:report": "phpunit -c phpunit.unit.xml.dist --log-junit coverage/junit-unit.xml --coverage-clover coverage/clover-unit.xml",
+    "test:integration:report": "phpunit -c phpunit.integration.xml.dist --log-junit coverage/junit-integration.xml --coverage-clover coverage/clover-integration.xml",
+    "test:report": "node .github/scripts/test-report.js",
     "test:integration:prepare": "bash tests/bin/normalize-wp-tests-config.sh",
     "test:integration": [
       "@test:integration:setup",
@@ -64,7 +67,10 @@
     "lint": "Run PHPCS (WordPress Coding Standards) over the plugin source.",
     "lint:fix": "Auto-fix PHPCS violations where possible.",
     "analyse": "Run PHPStan static analysis.",
-    "check": "Run every non-integration quality gate (composer validate, PHPCS, PHPStan, unit tests)."
+    "check": "Run every non-integration quality gate (composer validate, PHPCS, PHPStan, unit tests).",
+    "test:unit:report": "Run unit tests, writing JUnit and Clover coverage into coverage/ for the CI report. Needs pcov or Xdebug.",
+    "test:integration:report": "Run integration tests against an already-prepared WordPress suite, writing JUnit and Clover coverage into coverage/.",
+    "test:report": "Render the merged test and coverage summary from whatever is in coverage/."
   },
   "config": {
     "sort-packages": true,
