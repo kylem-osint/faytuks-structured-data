@@ -1,7 +1,12 @@
+# Dependency pull requests target staging rather than the default branch, so
+# they land where the rest of the work is integrated and reach main through the
+# same staging -> main merge as everything else. Note that Dependabot *security*
+# updates ignore target-branch and always open against the default branch.
 version: 2
 updates:
   - package-ecosystem: composer
     directory: "/"
+    target-branch: staging
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
@@ -14,6 +19,7 @@ updates:
 
   - package-ecosystem: npm
     directory: "/"
+    target-branch: staging
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
@@ -35,6 +41,7 @@ updates:
 
   - package-ecosystem: github-actions
     directory: "/"
+    target-branch: staging
     schedule:
       interval: weekly
     commit-message:
