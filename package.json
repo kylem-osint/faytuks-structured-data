@@ -48,6 +48,6 @@
     "commitizen": "^4.3.1",
     "conventional-changelog-conventionalcommits": "^9.3.1",
     "cz-conventional-changelog": "^3.3.0",
-    "semantic-release": "^25.0.9"
+    "semantic-release": "^26.0.1"
   }
 }
